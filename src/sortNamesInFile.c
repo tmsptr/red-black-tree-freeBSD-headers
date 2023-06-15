@@ -13,18 +13,18 @@ int compareNames(const void* a, const void* b) {
   return strcmp(nameA, nameB);
 }
 
-void sortNamesInFile(const char* inputFileName, const char* outputFileName) {
+int sortNamesInFile(const char* inputFileName, const char* outputFileName) {
   FILE* inputFile = fopen(inputFileName, "r");
   if (inputFile == NULL) {
     printf("Error opening input file.\n");
-    return;
+    return 1;
   }
 
   FILE* outputFile = fopen(outputFileName, "w");
   if (outputFile == NULL) {
     printf("Error opening output file.\n");
     fclose(inputFile);
-    return;
+    return 1;
   }
 
   char line[MAX_NAME_LENGTH];
@@ -57,5 +57,5 @@ void sortNamesInFile(const char* inputFileName, const char* outputFileName) {
   }
   free(names);
   fclose(outputFile);
-  printf("Names sorted and written to %s.\n", outputFileName);
+  return 0;
 }

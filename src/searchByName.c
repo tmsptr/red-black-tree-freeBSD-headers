@@ -52,7 +52,7 @@ struct TreeNode* searchByName(struct RBTree* tree, struct TreeNode* currentNode,
       char nameString[MAX_NAME_LENGTH] = "";
       int i = 0;
       while (i < currentNode->fullNameLength) {
-        printf("%s ", names[i]);
+        // printf("%s ", names[i]);
         strcat(nameString, names[i]);
         strcat(nameString, " ");
         i++;
@@ -60,15 +60,13 @@ struct TreeNode* searchByName(struct RBTree* tree, struct TreeNode* currentNode,
       addName(&foundNames, nameString);
       memset(nameString, 0, sizeof(nameString));
 
-      printf("\n");
-
       if (!TAILQ_EMPTY(&(currentNode->duplicates))) {
         struct DuplicateNode* node;
         TAILQ_FOREACH(node, &(currentNode->duplicates), entries) {
           char** names = node->fullName;
           int i = 0;
           while (i < node->fullNameLength) {
-            printf("%s ", names[i]);
+            // printf("%s ", names[i]);
             strcat(nameString, names[i]);
             strcat(nameString, " ");
             i++;
@@ -79,13 +77,12 @@ struct TreeNode* searchByName(struct RBTree* tree, struct TreeNode* currentNode,
           printf("\n");
         }
       }
-      printf("Names from the list: \n");
       printFoundNames(&foundNames);
 
       return currentNode;
     }
   }
 
-  printf("No node found with the name '%s'.\n", name);
+  printf("'%s' is not found.\n", name);
   return NULL;
 }

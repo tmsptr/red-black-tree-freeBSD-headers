@@ -1,4 +1,3 @@
-#include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,6 +35,12 @@ int compareNodes(struct TreeNode* a, struct TreeNode* b) {
   }
 }
 
+/*
+===========================================
+MACROS
+===========================================
+*/
+
 RB_HEAD(RBTree, TreeNode);                         /* Root */
 RB_GENERATE(RBTree, TreeNode, entry, compareNodes) /* Generate functions */
 
@@ -53,7 +58,9 @@ int handleFirstOptionOne() {
   printf("Enter the file name (including relative path) to read from: ");
   scanf("%s", fileName);
 
-  sortNamesInFile(fileName, "tmp.txt");
+  if (sortNamesInFile(fileName, "tmp.txt") != 0) {
+    return 1;
+  }
   populateTree(&tree, "tmp.txt");
   remove("tmp.txt");
 
@@ -106,6 +113,8 @@ FIRST OPTION TWO
 ===========================================
 */
 
+int mainMenu();
+
 int handleFirstOptionTwo() {
   char fileName[MAX_NAME_LENGTH];
   printf("Enter the file name (including relative path) to read from: ");
@@ -143,45 +152,98 @@ int handleFirstOptionTwo() {
   jsonBuffer[fileSize] = '\0';
   convertJSONtoText(jsonBuffer, "tmp.txt");
 
-  int secondOption;
-  printf("Loaded %s successfully", fileName);
-
   struct RBTree tree;
   RB_INIT(&tree);
 
   sortNamesInFile("tmp.txt", "tmp2.txt");
   populateTree(&tree, "tmp2.txt");
+  remove("tmp.txt");
+  remove("tmp2.txt");
 
-  printf("Choose operation:\n");
-  printf("1. Print\n");
-  printf("2. Search\n");
-  printf("3. Delete\n");
-  printf("Operation: ");
-  scanf("%d", &secondOption);
+  int secondOption;
+  do {
+    printf("\n");
+    printf("/*\n");
+    printf("===========================================\n");
+    printf("SECONDARY MENU\n");
+    printf("===========================================\n");
+    printf("*/\n");
+    printf("Loaded %s successfully\n", fileName);
+    printf("Choose operation with your file:\n");
+    printf("1. Print\n");
+    printf("2. Search name\n");
+    printf("3. Delete name\n");
+    printf("4. Back to main menu\n");
+    printf("Operation: ");
+    scanf("%d", &secondOption);
 
-  switch (secondOption) {
-    case 1:
-      //   remove("tmp.txt");
-      printNames(&tree, RB_ROOT(&tree), NULL, 0);
-      break;
-    case 2:
-      char searchValue[MAX_NAME_LENGTH];
-      printf("Enter the first name you are looking for: ");
-      scanf("%s", searchValue);
-      searchByName(&tree, RB_ROOT(&tree), searchValue);
-      break;
-    case 3:
-      // Delete
-      break;
-    default:
-      printf("Invalid operation.\n");
-      break;
-  }
+    switch (secondOption) {
+      case 1:
+        printNames(&tree, RB_ROOT(&tree), NULL, 0);
+        break;
+      case 2: {
+        char searchValue[MAX_NAME_LENGTH];
+        printf("Enter the first name you are looking for: ");
+        scanf("%s", searchValue);
+        searchByName(&tree, RB_ROOT(&tree), searchValue);
+        break;
+      }
+      case 3:
+        printf("Not implemented yet.\n");
+        break;
+      case 4:
+        mainMenu();
+        break;
+      default:
+        printf("Bad operation.\n");
+        break;
+    }
+  } while (secondOption != 4);
 
   fclose(file);
   free(jsonBuffer);
   return 0;
 }
+
+/*
+===========================================
+MAIN MENU
+===========================================
+*/
+
+int mainMenu() {
+  int firstOption;
+  do {
+    printf("\n");
+    printf("/*\n");
+    printf("===========================================\n");
+    printf("MAIN MENU\n");
+    printf("===========================================\n");
+    printf("*/\n");
+    printf("Choose an option:\n");
+    printf("1. Store list into RBTree JSON\n");
+    printf("2. Load RBTree from JSON\n");
+    printf("3. Exit\n");
+    printf("Option: ");
+    scanf("%d", &firstOption);
+
+    switch (firstOption) {
+      case 1:
+        handleFirstOptionOne();
+        break;
+      case 2:
+        handleFirstOptionTwo();
+        break;
+      case 3:
+        printf("Exiting the program.\n");
+        return 0;
+      default:
+        printf("Invalid option.\n");
+        break;
+    }
+  } while (firstOption != 3);
+}
+
 /*
 ===========================================
 MAIN
@@ -189,23 +251,6 @@ MAIN
 */
 
 int main() {
-  int firstOption;
-  printf("Choose an option:\n");
-  printf("1. Store list into RBTree JSON\n");
-  printf("2. Load RBTree from JSON\n");
-  printf("Option: ");
-  scanf("%d", &firstOption);
-
-  switch (firstOption) {
-    case 1:
-      handleFirstOptionOne();
-      break;
-    case 2:
-      handleFirstOptionTwo();
-      break;
-    default:
-      printf("Invalid option.\n");
-      break;
-  }
+  mainMenu();
   return 0;
 }
