@@ -11,6 +11,7 @@
 #include "../include/printNames.h"
 #include "../include/queue.h"
 #include "../include/searchByName.h"
+#include "../include/serializeToJSON.h"
 #include "../include/sortNamesInFile.h"
 #include "../include/structures.h"
 #include "../include/tree.h"
@@ -116,41 +117,7 @@ int handleFirstOptionOne() {
   printf("==============================\n\n");
   printf("\n");
 
-  /* JSON serialization */
-  cJSON* jsonTree = cJSON_CreateArray();
-  struct TreeNode *node, *nextNode;
-  RB_FOREACH_SAFE(node, RBTree, &tree, nextNode) {
-    cJSON* jsonNode = cJSON_CreateObject();
-    cJSON_AddNumberToObject(jsonNode, "key", node->key);
-
-    cJSON* fullNameArray = cJSON_CreateArray();
-    for (int i = 0; i < node->fullNameLength; i++) {
-      cJSON_AddItemToArray(fullNameArray,
-                           cJSON_CreateString(node->fullName[i]));
-    }
-    cJSON_AddItemToObject(jsonNode, "fullName", fullNameArray);
-
-    cJSON* duplicatesArray = cJSON_CreateArray();
-    struct DuplicateNode* duplicate;
-    TAILQ_FOREACH(duplicate, &(node->duplicates), entries) {
-      cJSON* duplicateNode = cJSON_CreateObject();
-      cJSON* duplicateFullNameArray = cJSON_CreateArray();
-      for (int i = 0; i < duplicate->fullNameLength; i++) {
-        cJSON_AddItemToArray(duplicateFullNameArray,
-                             cJSON_CreateString(duplicate->fullName[i]));
-      }
-      cJSON_AddItemToObject(duplicateNode, "fullName", duplicateFullNameArray);
-      cJSON_AddItemToArray(duplicatesArray, duplicateNode);
-    }
-    cJSON_AddItemToObject(jsonNode, "duplicates", duplicatesArray);
-
-    cJSON_AddItemToArray(jsonTree, jsonNode);
-
-    if (node == RB_ROOT(&tree)) {
-      cJSON_AddStringToObject(jsonNode, "root", "true");
-    }
-  }
-
+  cJSON* jsonTree = serializeTreeToJson(&tree);
   char* jsonString = cJSON_Print(jsonTree);
   cJSON_Delete(jsonTree);
 
