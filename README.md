@@ -1,4 +1,4 @@
-**Red and Black Tree implementation **
+**Red and Black Tree implementation**
 
 **RB_TREE** macros for tree - FreeBSD tree.h   
 **TAILQ** queue for storing duplicate values - FreeBSD queue.h   
