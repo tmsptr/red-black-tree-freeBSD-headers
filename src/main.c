@@ -79,7 +79,8 @@ int handleFirstOptionOne() {
   /* Remove extension */
   char* dot = strrchr(fileName, '.');
   if (dot != NULL && strcmp(dot, ".txt") == 0) {
-    *dot = '\0';
+    *dot = '0';
+    printf("NEW VALUE OF %s\n", dot);
   }
 
   /* JSON -> TXT */

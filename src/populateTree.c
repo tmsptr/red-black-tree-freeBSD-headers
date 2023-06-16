@@ -37,11 +37,11 @@ void populateTree(struct RBTree* tree, const char* fileName) {
     /* Create new tree node */
     struct TreeNode* node = (struct TreeNode*)malloc(sizeof(struct TreeNode));
     node->key = hash;
-    node->fullName = (char**)malloc(sizeof(char*) * (fullNameLength + 1));
+    node->fullName = (char**)malloc(sizeof(char*) * (fullNameLength));
     for (int i = 0; i < fullNameLength; i++) {
       node->fullName[i] = strdup(fullName[i]);
     }
-    node->fullName[fullNameLength] = NULL; /* NULL terminate */
+    // node->fullName[fullNameLength] = NULL; /* NULL terminate */
     node->fullNameLength = fullNameLength;
     TAILQ_INIT(&(node->duplicates));
 
@@ -52,12 +52,11 @@ void populateTree(struct RBTree* tree, const char* fileName) {
       /* Add to the queue */
       struct DuplicateNode* duplicate =
           (struct DuplicateNode*)malloc(sizeof(struct DuplicateNode));
-      duplicate->fullName =
-          (char**)malloc(sizeof(char*) * (fullNameLength + 1));
+      duplicate->fullName = (char**)malloc(sizeof(char*) * (fullNameLength));
       for (int i = 0; i < fullNameLength; i++) {
         duplicate->fullName[i] = strdup(fullName[i]);
       }
-      duplicate->fullName[fullNameLength] = NULL; /* NULL terminate */
+      // duplicate->fullName[fullNameLength] = NULL; /* NULL terminate */
       duplicate->fullNameLength = fullNameLength;
       TAILQ_INSERT_TAIL(&(existingNode->duplicates), duplicate, entries);
     }
