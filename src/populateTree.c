@@ -7,7 +7,7 @@
 #include "../include/computeHash.h"
 #include "../include/structures.h"
 
-#define MAX_NAME_LENGTH 256
+#define MAX_NAME_LENGTH 42
 
 RB_PROTOTYPE(RBTree, TreeNode, entry,
              compareNodes) /* Generate function prototypes */
@@ -25,7 +25,7 @@ void populateTree(struct RBTree* tree, const char* fileName) {
     int fullNameLength = 0;
     char* token = strtok(line, " \t\n");
     char** fullName = (char**)malloc(sizeof(char*) * MAX_NAME_LENGTH);
-    while (token != NULL) {
+    while (token != NULL && fullNameLength < MAX_NAME_LENGTH) {
       fullName[fullNameLength] = strdup(token);
       fullNameLength++;
       token = strtok(NULL, " \t\n");
@@ -37,7 +37,11 @@ void populateTree(struct RBTree* tree, const char* fileName) {
     /* Create new tree node */
     struct TreeNode* node = (struct TreeNode*)malloc(sizeof(struct TreeNode));
     node->key = hash;
-    node->fullName = fullName;
+    node->fullName = (char**)malloc(sizeof(char*) * (fullNameLength + 1));
+    for (int i = 0; i < fullNameLength; i++) {
+      node->fullName[i] = strdup(fullName[i]);
+    }
+    node->fullName[fullNameLength] = NULL; /* NULL terminate */
     node->fullNameLength = fullNameLength;
     TAILQ_INIT(&(node->duplicates));
 
@@ -48,11 +52,16 @@ void populateTree(struct RBTree* tree, const char* fileName) {
       /* Add to the queue */
       struct DuplicateNode* duplicate =
           (struct DuplicateNode*)malloc(sizeof(struct DuplicateNode));
-      duplicate->fullName = fullName;
+      duplicate->fullName =
+          (char**)malloc(sizeof(char*) * (fullNameLength + 1));
+      for (int i = 0; i < fullNameLength; i++) {
+        duplicate->fullName[i] = strdup(fullName[i]);
+      }
+      duplicate->fullName[fullNameLength] = NULL; /* NULL terminate */
       duplicate->fullNameLength = fullNameLength;
       TAILQ_INSERT_TAIL(&(existingNode->duplicates), duplicate, entries);
     }
+    free(fullName);
   }
-
   fclose(file);
 }

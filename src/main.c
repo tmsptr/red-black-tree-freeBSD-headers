@@ -17,7 +17,7 @@
 #include "../include/tree.h"
 #include "../include/xxhash.h"
 
-#define MAX_NAME_LENGTH 256
+#define MAX_NAME_LENGTH 42
 
 /*
 ===========================================
@@ -101,8 +101,23 @@ int handleFirstOptionOne() {
 
   /* FREE */
   struct TreeNode *currentNode, *tmpNode;
+  struct DuplicateNode* currentDuplicate;
+  struct DuplicateNode* tempDuplicate;
+
   RB_FOREACH_SAFE(currentNode, RBTree, &tree, tmpNode) {
     RB_REMOVE(RBTree, &tree, currentNode);
+
+    TAILQ_FOREACH_SAFE(currentDuplicate, &(currentNode->duplicates), entries,
+                       tempDuplicate) {
+      TAILQ_REMOVE(&(currentNode->duplicates), currentDuplicate, entries);
+
+      for (int i = 0; i < currentDuplicate->fullNameLength; i++) {
+        free(currentDuplicate->fullName[i]);
+      }
+      free(currentDuplicate->fullName);
+      free(currentDuplicate);
+    }
+
     free(currentNode);
   }
 }

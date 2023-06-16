@@ -1,11 +1,10 @@
 #include "../include/sortNamesInFile.h"
 
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_NAME_LENGTH 256
+#define MAX_NAME_LENGTH 42
 
 int compareNames(const void* a, const void* b) {
   const char* nameA = *(const char**)a;
